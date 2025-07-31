@@ -1,0 +1,101 @@
+--// Grow A Garden Auto Stop GUI
+
+-- Auto Stop Pets List
+local autoStopPets = {
+    "Dragonfly",
+    "Queen Bee",
+    "Red Fox",
+    "Raccoon",
+    "Fennec Fox"
+}
+
+-- UI Creation
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local StopBtn = Instance.new("TextButton")
+local ResumeBtn = Instance.new("TextButton")
+local AutoStopLabel = Instance.new("TextLabel")
+local PetsList = Instance.new("TextLabel")
+
+-- Parent to Player GUI
+ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Name = "GrowAGardenAutoStopGUI"
+
+-- Frame Setup
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 200, 0, 220)
+Frame.Position = UDim2.new(0, 100, 0, 100)
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BorderSizePixel = 0
+
+-- Stop Button
+StopBtn.Parent = Frame
+StopBtn.Size = UDim2.new(1, -20, 0, 40)
+StopBtn.Position = UDim2.new(0, 10, 0, 10)
+StopBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+StopBtn.Text = "Stop"
+StopBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- Resume Button
+ResumeBtn.Parent = Frame
+ResumeBtn.Size = UDim2.new(1, -20, 0, 40)
+ResumeBtn.Position = UDim2.new(0, 10, 0, 60)
+ResumeBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+ResumeBtn.Text = "Resume"
+ResumeBtn.TextColor3 = Color3.new(1, 1, 1)
+
+-- Auto Stop Label
+AutoStopLabel.Parent = Frame
+AutoStopLabel.Size = UDim2.new(1, -20, 0, 30)
+AutoStopLabel.Position = UDim2.new(0, 10, 0, 110)
+AutoStopLabel.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
+AutoStopLabel.Text = "Auto Stop: ON"
+AutoStopLabel.TextColor3 = Color3.new(0, 0, 0)
+
+-- Pets List
+PetsList.Parent = Frame
+PetsList.Size = UDim2.new(1, -20, 0, 70)
+PetsList.Position = UDim2.new(0, 10, 0, 150)
+PetsList.BackgroundTransparency = 1
+PetsList.TextColor3 = Color3.new(1, 1, 1)
+PetsList.TextXAlignment = Enum.TextXAlignment.Left
+PetsList.TextYAlignment = Enum.TextYAlignment.Top
+PetsList.TextWrapped = true
+PetsList.Text = "Auto-Stop Pets:\n- " .. table.concat(autoStopPets, "\n- ")
+
+-- Main Control Logic
+local autoStop = true
+local isRunning = true
+
+local function stopGarden()
+    isRunning = false
+    print("Garden stopped.")
+end
+
+local function resumeGarden()
+    isRunning = true
+    print("Garden resumed.")
+end
+
+local function checkAutoStop(pet)
+    if autoStop and table.find(autoStopPets, pet) then
+        stopGarden()
+    end
+end
+
+-- Button Connections
+StopBtn.MouseButton1Click:Connect(stopGarden)
+ResumeBtn.MouseButton1Click:Connect(resumeGarden)
+
+-- Pet Detection Loop (simulate)
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if isRunning then
+            local currentPet = "Red Fox" -- Example (Replace with actual game logic)
+            print("Current Pet:", currentPet)
+            checkAutoStop(currentPet)
+        end
+    end
+end)
