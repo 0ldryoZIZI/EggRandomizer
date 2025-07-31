@@ -1,101 +1,98 @@
---// Grow A Garden Auto Stop GUI
+-- ryobestScripter Pet Randomizer GUI
+local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
+local LocalPlayer = Players.LocalPlayer
 
--- Auto Stop Pets List
-local autoStopPets = {
-    "Dragonfly",
-    "Queen Bee",
-    "Red Fox",
-    "Raccoon",
-    "Fennec Fox"
-}
-
--- UI Creation
-local ScreenGui = Instance.new("ScreenGui")
-local Frame = Instance.new("Frame")
-local StopBtn = Instance.new("TextButton")
-local ResumeBtn = Instance.new("TextButton")
-local AutoStopLabel = Instance.new("TextLabel")
-local PetsList = Instance.new("TextLabel")
-
--- Parent to Player GUI
-ScreenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
-ScreenGui.ResetOnSpawn = false
-ScreenGui.Name = "GrowAGardenAutoStopGUI"
-
--- Frame Setup
-Frame.Parent = ScreenGui
-Frame.Size = UDim2.new(0, 200, 0, 220)
-Frame.Position = UDim2.new(0, 100, 0, 100)
-Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.BorderSizePixel = 0
-
--- Stop Button
-StopBtn.Parent = Frame
-StopBtn.Size = UDim2.new(1, -20, 0, 40)
-StopBtn.Position = UDim2.new(0, 10, 0, 10)
-StopBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-StopBtn.Text = "Stop"
-StopBtn.TextColor3 = Color3.new(1, 1, 1)
-
--- Resume Button
-ResumeBtn.Parent = Frame
-ResumeBtn.Size = UDim2.new(1, -20, 0, 40)
-ResumeBtn.Position = UDim2.new(0, 10, 0, 60)
-ResumeBtn.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
-ResumeBtn.Text = "Resume"
-ResumeBtn.TextColor3 = Color3.new(1, 1, 1)
-
--- Auto Stop Label
-AutoStopLabel.Parent = Frame
-AutoStopLabel.Size = UDim2.new(1, -20, 0, 30)
-AutoStopLabel.Position = UDim2.new(0, 10, 0, 110)
-AutoStopLabel.BackgroundColor3 = Color3.fromRGB(255, 200, 50)
-AutoStopLabel.Text = "Auto Stop: ON"
-AutoStopLabel.TextColor3 = Color3.new(0, 0, 0)
-
--- Pets List
-PetsList.Parent = Frame
-PetsList.Size = UDim2.new(1, -20, 0, 70)
-PetsList.Position = UDim2.new(0, 10, 0, 150)
-PetsList.BackgroundTransparency = 1
-PetsList.TextColor3 = Color3.new(1, 1, 1)
-PetsList.TextXAlignment = Enum.TextXAlignment.Left
-PetsList.TextYAlignment = Enum.TextYAlignment.Top
-PetsList.TextWrapped = true
-PetsList.Text = "Auto-Stop Pets:\n- " .. table.concat(autoStopPets, "\n- ")
-
--- Main Control Logic
-local autoStop = true
-local isRunning = true
-
-local function stopGarden()
-    isRunning = false
-    print("Garden stopped.")
+-- Remove existing GUI
+if CoreGui:FindFirstChild("RyobestRandomizerGUI") then
+    CoreGui.RyobestRandomizerGUI:Destroy()
 end
 
-local function resumeGarden()
-    isRunning = true
-    print("Garden resumed.")
+-- Create main GUI
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "RyobestRandomizerGUI"
+screenGui.Parent = CoreGui
+
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 300, 0, 250)
+frame.Position = UDim2.new(0.5, -150, 0.4, -125)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = screenGui
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.Text = "Pet Randomizer\nmade by ryobestScripter"
+title.TextColor3 = Color3.fromRGB(50, 255, 100)
+title.TextStrokeTransparency = 0
+title.TextScaled = true
+title.BackgroundTransparency = 1
+title.Parent = frame
+
+-- Helper to create buttons
+local function createButton(text, color, y)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, -20, 0, 40)
+    btn.Position = UDim2.new(0, 10, 0, y)
+    btn.BackgroundColor3 = color
+    btn.Text = text
+    btn.TextScaled = true
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.BorderSizePixel = 0
+    btn.Parent = frame
+    return btn
 end
 
-local function checkAutoStop(pet)
-    if autoStop and table.find(autoStopPets, pet) then
-        stopGarden()
+local randomizeBtn = createButton("🎲 Randomize Pets", Color3.fromRGB(255,115,0), 50)
+local espBtn = createButton("👁️ ESP: ON", Color3.fromRGB(60,60,60), 100)
+local autoBtn = createButton("🔄 Auto Randomize: OFF", Color3.fromRGB(0,180,120), 150)
+local petAgeBtn = createButton("📜 Load Pet Age 50 Script", Color3.fromRGB(160,100,255), 200)
+
+local espEnabled = true
+local autoRandomize = false
+
+espBtn.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    espBtn.Text = "👁️ ESP: " .. (espEnabled and "ON" or "OFF")
+end)
+
+autoBtn.MouseButton1Click:Connect(function()
+    autoRandomize = not autoRandomize
+    autoBtn.Text = "🔄 Auto Randomize: " .. (autoRandomize and "ON" or "OFF")
+end)
+
+petAgeBtn.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://YOUR_HOST/loadpetage50.lua"))()
+end)
+
+randomizeBtn.MouseButton1Click:Connect(function()
+    for _, egg in pairs(workspace:GetDescendants()) do
+        if egg:IsA("Model") and egg:FindFirstChild("Egg") then
+            local name = egg.Name
+            local billboard = egg:FindFirstChild("NameBillboard") or Instance.new("BillboardGui")
+            billboard.Name = "NameBillboard"
+            billboard.Size = UDim2.new(0,100,0,20)
+            billboard.StudsOffset = Vector3.new(0,3,0)
+            billboard.AlwaysOnTop = true
+            billboard.Parent = egg
+
+            local label = billboard:FindFirstChild("TextLabel") or Instance.new("TextLabel")
+            label.Size = UDim2.new(1,0,1,0)
+            label.BackgroundTransparency = 1
+            label.Text = "🎲 " .. name
+            label.TextScaled = true
+            label.TextColor3 = Color3.fromRGB(255,255,0)
+            label.Parent = billboard
+        end
     end
-end
+end)
 
--- Button Connections
-StopBtn.MouseButton1Click:Connect(stopGarden)
-ResumeBtn.MouseButton1Click:Connect(resumeGarden)
-
--- Pet Detection Loop (simulate)
 task.spawn(function()
     while true do
-        task.wait(1)
-        if isRunning then
-            local currentPet = "Red Fox" -- Example (Replace with actual game logic)
-            print("Current Pet:", currentPet)
-            checkAutoStop(currentPet)
+        task.wait(5)
+        if autoRandomize then
+            randomizeBtn:MouseButton1Click()
         end
     end
 end)
