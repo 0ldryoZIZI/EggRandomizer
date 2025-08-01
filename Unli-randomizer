@@ -1,98 +1,121 @@
--- ryobestScripter Pet Randomizer GUI
+loadstring([[
+-- Made by ryoBestScripter
+
 local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 
--- Remove existing GUI
-if CoreGui:FindFirstChild("RyobestRandomizerGUI") then
-    CoreGui.RyobestRandomizerGUI:Destroy()
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui", LocalPlayer:WaitForChild("PlayerGui"))
+ScreenGui.Name = "ryoBestStealerUI"
+
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Position = UDim2.new(0.7, 0, 0.2, 0)
+Frame.Size = UDim2.new(0, 250, 0, 160)
+Frame.BackgroundColor3 = Color3.fromRGB(60, 180, 75)
+Frame.BackgroundTransparency = 0.1
+Frame.BorderSizePixel = 4
+Frame.Name = "StealerMain"
+
+local Title = Instance.new("TextLabel", Frame)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.BackgroundTransparency = 1
+Title.Text = "StealerX - made by ryoBestScripter"
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
+Title.TextColor3 = Color3.new(1, 1, 1)
+
+local Drop = Instance.new("TextButton", Frame)
+Drop.Position = UDim2.new(0.1, 0, 0.3, 0)
+Drop.Size = UDim2.new(0.8, 0, 0, 30)
+Drop.Text = "Pick Player"
+Drop.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+Drop.TextColor3 = Color3.new(1, 1, 1)
+Drop.Font = Enum.Font.Gotham
+Drop.TextSize = 14
+
+local PlayerToSteal = nil
+
+Drop.MouseButton1Click:Connect(function()
+	local menu = Instance.new("Frame", ScreenGui)
+	menu.Size = UDim2.new(0, 150, 0, 150)
+	menu.Position = UDim2.new(0.7, 0, 0.4, 0)
+	menu.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	menu.BorderSizePixel = 2
+	menu.Name = "DropList"
+
+	for _, plr in ipairs(Players:GetPlayers()) do
+		if plr ~= LocalPlayer then
+			local btn = Instance.new("TextButton", menu)
+			btn.Size = UDim2.new(1, 0, 0, 20)
+			btn.Text = plr.Name
+			btn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+			btn.TextColor3 = Color3.new(1, 1, 1)
+			btn.MouseButton1Click:Connect(function()
+				PlayerToSteal = plr
+				Drop.Text = "Target: " .. plr.Name
+				menu:Destroy()
+			end)
+		end
+	end
+end)
+
+local Steal = Instance.new("TextButton", Frame)
+Steal.Position = UDim2.new(0.1, 0, 0.6, 0)
+Steal.Size = UDim2.new(0.8, 0, 0, 30)
+Steal.Text = "STEAL"
+Steal.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+Steal.TextColor3 = Color3.new(1, 1, 1)
+Steal.Font = Enum.Font.GothamBold
+Steal.TextSize = 16
+
+function CreateFakeGift(fromPlayer)
+	local Popup = Instance.new("Frame", ScreenGui)
+	Popup.Size = UDim2.new(0, 220, 0, 80)
+	Popup.Position = UDim2.new(0.5, -110, 0.5, -40)
+	Popup.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+	Popup.BorderSizePixel = 4
+
+	local Label = Instance.new("TextLabel", Popup)
+	Label.Size = UDim2.new(1, 0, 0.4, 0)
+	Label.Text = "Gift from @" .. fromPlayer.Name .. " [1.00kg]"
+	Label.Font = Enum.Font.GothamBold
+	Label.TextSize = 14
+	Label.BackgroundTransparency = 1
+	Label.TextColor3 = Color3.new(1, 1, 1)
+
+	local Accept = Instance.new("TextButton", Popup)
+	Accept.Position = UDim2.new(0.1, 0, 0.5, 0)
+	Accept.Size = UDim2.new(0.35, 0, 0.4, 0)
+	Accept.Text = "Accept"
+	Accept.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+	Accept.Font = Enum.Font.GothamBold
+	Accept.TextColor3 = Color3.new(1, 1, 1)
+
+	local Decline = Instance.new("TextButton", Popup)
+	Decline.Position = UDim2.new(0.55, 0, 0.5, 0)
+	Decline.Size = UDim2.new(0.35, 0, 0.4, 0)
+	Decline.Text = "Decline"
+	Decline.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+	Decline.Font = Enum.Font.GothamBold
+	Decline.TextColor3 = Color3.new(1, 1, 1)
+
+	Accept.MouseButton1Click:Connect(function()
+		Popup:Destroy()
+	end)
+	Decline.MouseButton1Click:Connect(function()
+		Popup:Destroy()
+	end)
 end
 
--- Create main GUI
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "RyobestRandomizerGUI"
-screenGui.Parent = CoreGui
+Steal.MouseButton1Click:Connect(function()
+	if PlayerToSteal then
+		local Clone = PlayerToSteal.Character:Clone()
+		Clone.Parent = workspace
+		Clone:MoveTo(LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(2, 0, 0))
 
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 300, 0, 250)
-frame.Position = UDim2.new(0.5, -150, 0.4, -125)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.BorderSizePixel = 0
-frame.Parent = screenGui
+		wait(1)
 
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 0)
-title.Text = "Pet Randomizer\nmade by ryobestScripter"
-title.TextColor3 = Color3.fromRGB(50, 255, 100)
-title.TextStrokeTransparency = 0
-title.TextScaled = true
-title.BackgroundTransparency = 1
-title.Parent = frame
-
--- Helper to create buttons
-local function createButton(text, color, y)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(1, -20, 0, 40)
-    btn.Position = UDim2.new(0, 10, 0, y)
-    btn.BackgroundColor3 = color
-    btn.Text = text
-    btn.TextScaled = true
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.BorderSizePixel = 0
-    btn.Parent = frame
-    return btn
-end
-
-local randomizeBtn = createButton("🎲 Randomize Pets", Color3.fromRGB(255,115,0), 50)
-local espBtn = createButton("👁️ ESP: ON", Color3.fromRGB(60,60,60), 100)
-local autoBtn = createButton("🔄 Auto Randomize: OFF", Color3.fromRGB(0,180,120), 150)
-local petAgeBtn = createButton("📜 Load Pet Age 50 Script", Color3.fromRGB(160,100,255), 200)
-
-local espEnabled = true
-local autoRandomize = false
-
-espBtn.MouseButton1Click:Connect(function()
-    espEnabled = not espEnabled
-    espBtn.Text = "👁️ ESP: " .. (espEnabled and "ON" or "OFF")
+		CreateFakeGift(PlayerToSteal)
+	end
 end)
-
-autoBtn.MouseButton1Click:Connect(function()
-    autoRandomize = not autoRandomize
-    autoBtn.Text = "🔄 Auto Randomize: " .. (autoRandomize and "ON" or "OFF")
-end)
-
-petAgeBtn.MouseButton1Click:Connect(function()
-    loadstring(game:HttpGet("https://YOUR_HOST/loadpetage50.lua"))()
-end)
-
-randomizeBtn.MouseButton1Click:Connect(function()
-    for _, egg in pairs(workspace:GetDescendants()) do
-        if egg:IsA("Model") and egg:FindFirstChild("Egg") then
-            local name = egg.Name
-            local billboard = egg:FindFirstChild("NameBillboard") or Instance.new("BillboardGui")
-            billboard.Name = "NameBillboard"
-            billboard.Size = UDim2.new(0,100,0,20)
-            billboard.StudsOffset = Vector3.new(0,3,0)
-            billboard.AlwaysOnTop = true
-            billboard.Parent = egg
-
-            local label = billboard:FindFirstChild("TextLabel") or Instance.new("TextLabel")
-            label.Size = UDim2.new(1,0,1,0)
-            label.BackgroundTransparency = 1
-            label.Text = "🎲 " .. name
-            label.TextScaled = true
-            label.TextColor3 = Color3.fromRGB(255,255,0)
-            label.Parent = billboard
-        end
-    end
-end)
-
-task.spawn(function()
-    while true do
-        task.wait(5)
-        if autoRandomize then
-            randomizeBtn:MouseButton1Click()
-        end
-    end
-end)
+]])()
